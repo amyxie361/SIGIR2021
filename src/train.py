@@ -26,6 +26,7 @@ def main():
     parser.add_argument('--dim', dest='dim', default=128, type=int)
     parser.add_argument('--query_maxlen', dest='query_maxlen', default=32, type=int)
     parser.add_argument('--doc_maxlen', dest='doc_maxlen', default=180, type=int)
+    parser.add_argument('--save_step', default=100, type=int)
 
     # TODO: Add resume functionality
     # TODO: Save the configuration to the checkpoint.

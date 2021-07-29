@@ -21,12 +21,14 @@ class TrainReader:
         return [self.reader.readline().split('\t') for _ in range(bsize)]
 
 
-def manage_checkpoints(colbert, optimizer, batch_idx):
-    if batch_idx % 2000 == 0:
-        save_checkpoint("colbert-test.dnn", 0, batch_idx, colbert, optimizer)
+def manage_checkpoints(colbert, optimizer, batch_idx, path="./", args=None):
+    if batch_idx % args.save_step == 0:
+        save_checkpoint(path + "/colbert-test.dnn", 0, batch_idx, colbert, optimizer)
+        print("Saved in", path + "/colbert-test.dnn")
 
     if batch_idx in SAVED_CHECKPOINTS:
-        save_checkpoint("colbert-test-" + str(batch_idx) + ".dnn", 0, batch_idx, colbert, optimizer)
+        save_checkpoint(path + "/colbert-test-" + str(batch_idx) + ".dnn", 0, batch_idx, colbert, optimizer)
+        print("Saved in", path + "/colbert-test-" + str(batch_idx) + ".dnn")
 
 
 def train(args):
@@ -75,4 +77,4 @@ def train(args):
 
         print_message(batch_idx, train_loss / (batch_idx+1))
 
-        manage_checkpoints(colbert, optimizer, batch_idx+1)
+        manage_checkpoints(colbert, optimizer, batch_idx+1, path=args.output_dir, args=args)
