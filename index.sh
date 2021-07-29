@@ -1,5 +1,6 @@
+mkdir -p ./collections/retok_reindex
 python -m src.index \
-    --output_path ./collections/origin_reindex \
+    --output_path ./collections/retok_reindex \
     --collection /home/y247xie/00_data/MSMARCO/collection.tsv \
     --ckpt /home/y247xie/01_exps/DeepImpact/official/colbert-12layers-100000.dnn
 

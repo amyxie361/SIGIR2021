@@ -25,8 +25,12 @@ def tok(line):
     content = ' '.join(d)
     tokenized_content = net.tokenizer.tokenize(content)
 
-    terms = list(set([(t, d.index(t)) for t in d]))  # Quadratic!
-    word_indexes = list(accumulate([-1] + tokenized_content, lambda a, b: a + int(not b.startswith('##'))))
+    #terms = list(set([(t, d.index(t)) for t in d]))  # Quadratic!
+    #word_indexes = list(accumulate([-1] + tokenized_content, lambda a, b: a + int(not b.startswith('##'))))
+    #terms = [(t, word_indexes.index(idx)) for t, idx in terms]
+    #terms = [(t, idx) for (t, idx) in terms if idx < MAX_LENGTH]
+    terms = list(set([(t, tokenized_content.index(t)) for t in tokenized_content]))
+    word_indexes = [-1] + list(range(len(tokenized_content)))
     terms = [(t, word_indexes.index(idx)) for t, idx in terms]
     terms = [(t, idx) for (t, idx) in terms if idx < MAX_LENGTH]
 
@@ -129,7 +133,6 @@ if __name__ == "__main__":
             passage = passage.strip()
             pid, passage = passage.split('\t')
             super_batch.append((pid, passage))
-
             if idx % 1000000 == 999999 :
                 text_id += 1
                 print("writen in ", g)
