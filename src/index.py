@@ -30,15 +30,15 @@ def tok(line):
     terms = [(t, word_indexes.index(idx)) for t, idx in terms]
     terms = [(t, idx) for (t, idx) in terms if idx < MAX_LENGTH]
 
-    return tokenized_content, terms, cont, docid
+    return tokenized_content, terms, cont, docid # record cont and docid
 
 def quantize(value, scale):
     return int(ceil(value * scale))
 
 
-def process_batch(super_batch):
+def process_batch(super_batch): #directly save results after quantization
     print_message("Start process_batch()", "")
-    scale = (1 << 8) / 21.0
+    scale = (1 << 8) / 21.0 # scale = (1<< Quantization_bits) / Max_val
 
     with torch.no_grad():
         super_batch = list(p.map(tok, super_batch))
@@ -135,9 +135,9 @@ if __name__ == "__main__":
                 print("writen in ", g)
                 g = open(args.output_path + "/doc{}.json".format(text_id), "w")
 
-plines = process_batch(super_batch)
-for l in plines:
-    g.write(l)
-g.close()
-f.close()
+    plines = process_batch(super_batch)
+    for l in plines:
+        g.write(l)
+    g.close()
+    f.close()
 
