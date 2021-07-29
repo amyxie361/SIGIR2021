@@ -78,8 +78,8 @@ class MultiBERT(BertPreTrainedModel):
 
             pre_pairs.append((tokenized, token_idxs))
 
-        if max_seq_length % 10 == 0:
-            print("#>>>   max_seq_length = ", max_seq_length)
+        #if max_seq_length % 10 == 0:
+        #    print("#>>>   max_seq_length = ", max_seq_length)
 
         for tokenized, token_idxs in pre_pairs:
             pairs.append(self.convert_example(tokenized, max_seq_length))
@@ -128,20 +128,22 @@ class MultiBERT(BertPreTrainedModel):
         return (mask.type(torch.float32) @ y_score), term_scores #, ordered_terms #, num_exceeding_fifth
 
     def index(self, D, max_seq_length):
-        if max_seq_length % 10 == 0:
-            print("#>>>   max_seq_length = ", max_seq_length)
+        #if max_seq_length % 10 == 0:
+        #    print("#>>>   max_seq_length = ", max_seq_length)
 
         bsize = len(D)
         offset = 0
         pairs, X = [], []
         conts = []
+        docids = []
 
-        for tokenized_content, terms, cont in D:
+        for tokenized_content, terms, cont, docid in D:
             terms = [(t, idx, offset + pos) for pos, (t, idx) in enumerate(terms)]
             offset += len(terms)
             pairs.append(self.convert_example(tokenized_content, max_seq_length))
             X.append(terms)
             conts.append(cont)
+            docids.append(docid)
 
         input_ids = torch.tensor([f['input_ids'] for f in pairs], dtype=torch.long).to(DEVICE)
         attention_mask = torch.tensor([f['attention_mask'] for f in pairs], dtype=torch.long).to(DEVICE)
@@ -156,5 +158,5 @@ class MultiBERT(BertPreTrainedModel):
         y_score = y_score.squeeze().cpu().numpy().tolist()
         term_scores = [[(term, y_score[pos]) for term, _, pos in terms] for terms in X]
 
-        return term_scores,conts
+        return term_scores, conts, docids
 
